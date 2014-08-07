@@ -1,0 +1,115 @@
+.chatbox-container{
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+}
+.chatbox {
+    position: fixed;
+    bottom: 0px;
+    width: 225px;
+    display: none;
+    bottom: 0px;
+    right: 0px;
+    -webkit-transition: right 0.3s;
+    -moz-transition: right 0.3s;
+    transition: right 0.3s;
+
+    -webkit-animation-duration: .8s;
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-duration: .8s;
+    -moz-animation-iteration-count: 1;
+    animation-duration: .8s;
+    animation-iteration-count: 1;
+}
+.chatbox-selected {
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.chatbox-header {
+    background-color: #176689;
+    padding:7px;
+    color: #ffffff;
+    border-right:1px solid #176689;
+    border-left:1px solid #176689;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    transition: background-color 0.3s;
+}
+.chatbox-title {
+    font-size: 11px;
+    text-shadow: none;
+    float: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 80%;
+    cursor: pointer;
+}
+.chatbox-options {
+    float: right;
+}
+.chatbox-options a {
+    text-decoration: none;
+    color: white;
+    font-weight:bold;
+    font-family:Verdana,Arial,"Bitstream Vera Sans",sans-serif;
+}
+.chatbox-blink {
+    background-color: #0F820C /* #f99d39 */;
+    border-right:1px solid #0F820C;
+    border-left:1px solid #0F820C;
+}
+.chatbox-content {
+    font-family: arial,sans-serif;
+    font-size: 13px;
+    color: #333333;
+    height:200px;
+    width:209px;
+    overflow-y:auto;
+    overflow-x:auto;
+    padding:7px;
+    border-left:1px solid #cccccc;
+    border-right:1px solid #cccccc;
+    border-bottom:1px solid #eeeeee;
+    background-color: #ffffff;
+    line-height: 1.3em;
+}
+.chatbox-input {
+    padding: 5px;
+    background-color: #ffffff;
+    border-left:1px solid #cccccc;
+    border-right:1px solid #cccccc;
+    border-bottom:1px solid #cccccc;
+}
+.chatbox-textarea {
+    width: 206px;
+    min-height:40px;
+    height:50px;
+    max-height:100px;
+    padding:3px 0pt 3px 3px;
+    border: 1px solid #eeeeee;
+    margin: 1px;
+    overflow:hidden;
+}
+.chatbox-textarea-selected {
+    border: 2px solid #176689;
+    margin:0;
+}
+.chatbox-message {
+    margin-left:1em;
+}
+.chatbox-info {
+    margin-left:-1em;
+    color:#666666;
+}
+.chatbox-message .message-by {
+    margin-left:-1em;
+    font-weight: bold;
+    color: #176689;
+}
+.chatbox-message .message-from {
+    margin-left:-1em;
+    font-weight: bold;
+    color: #0F820C;
+}
+.chatbox-message .message-content {
+}

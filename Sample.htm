@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbox Sample</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+    body {
+        background-color: #eeeeee;
+        padding:0;
+        margin:0 auto;
+        font-family:"Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;
+        font-size:11px;
+    }
+    </style>
+    <link type="text/css" rel="stylesheet" media="all" href="css/jQuery.chatbox.css">
+    <link type="text/css" rel="stylesheet" media="all" href="css/animate-custom.css">
+    <link type="text/css" rel="stylesheet" media="all" href="css/style.css">
+</head>
+<body>
+<div id="main-container">
+
+<h2>开启聊天窗实例</h2>
+<div>
+    <h4>快速添加</h4>
+    <a class="chat1" href="javascript:void(0)">Chat With Jason(id:10000)</a>
+    <a class="chat2" href="javascript:void(0)">Chat With Kitty(id:10005)</a>
+    <a class="chat3" href="javascript:void(0)">Chat With Tony(id:10009)</a>
+    <h4>自定义添加</h4>
+    <input type="text" id="chatbox-id" placeholder="设定聊天窗的ID">
+    <input type="text" id="chatbox-user" placeholder="设定对方用户名">
+    <input type="button" id="do-chat" value="Chat">
+</div>
+<h2>全局API</h2>
+<div>
+    <div>
+        <input class="btn" type="button" id="get-queue" value="Get Chatbox Instance Queue">
+    </div>
+</div>
+<h2>实例API</h2>
+<div>
+    <input type="text" id="chatbox-id-api" placeholder="响应的窗口(接收方)">
+    <input type="text" id="message-content" placeholder="消息内容">
+    <select id="message-type">
+        <option value="from" selected="selected">Receive</option>
+        <option value="to">Send</option>
+        <option value="system">System</option>
+    </select>
+    <h4>基本API</h4>
+    <input type="button" id="set-msg" value="Set Message">
+    <input type="button" id="set-enable" value="Set Enable">
+    <input type="button" id="set-disable" value="Set Disable">
+    <input type="button" id="set-show" value="Set Show">
+    <input type="button" id="set-hide" value="Set Hide">
+    <input type="button" id="set-destroy" value="Set Destroy">
+    <h4>工具API</h4>
+    <input type="button" id="set-blink" value="Set Blink">
+    <input type="button" id="set-animate" value="Set Animate">
+</div>
+</div>
+
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/jQuery.chatbox.js"></script>
+<script type="text/javascript">
+    $(function(){
+        /** For Demo **/
+        $(document).on('click','.chatbox',function(){
+            console.info('Has been selected chatbox: ',$(this).data('chatbox').opts.id);
+             $('#chatbox-id-api').val($(this).data('chatbox').opts.id);
+        });
+
+        /** 配置项的使用 **/
+        // 查看全局配置项默认值
+        console.info('默认的全局配置项:',$.chatbox.globalOptions);
+
+        // 由于聊天窗不同于Bootstrap中类似于tooltip这样的插件，聊天窗一般不需要为每个实例分配一份完全一样的函数副本，因此回调函数最好是设定在全局参数中，以节省内存开销
+        $.chatbox.globalOptions = {
+            id:99999,
+            user:'耗斯基',
+            debug:true,
+            onChatboxCreate:function(){
+                // 所有回调函数的this指针经由apply或者call方法已经指向调用该方法的实例，可以在控制台查看this对象
+                console.info('onChatboxCreate(Global) Run!','this: ',this);
+            },
+            onChatboxDestroy:function(){
+                console.info('onChatboxDestroy(Global) Run!');
+            }
+        }
+        console.info('当前的全局配置项:',$.chatbox.globalOptions);
+
+        // 为每个实例单独分配回调函数时也应该尽可能的预定义然后仅向Chatbox初始化参数中传递函数引用，这样可以很大程度上节省内存开销
+        var chatboxCallback = {
+            onChatboxCreate:function(){
+                // 所有回调函数的this指针经由apply或者call方法已经指向调用该方法的实例，可以在控制台查看this对象
+                console.info('onChatboxCreate(Global) Run!','this: ',this);
+            },
+            onMessageSend:function(msg){
+                console.info('onMessageSend(Instance) Run!','The sent message is: ',msg);
+            },
+            onMessageReceive:function(msg){
+                console.info('onMessageReceive(Instance) Run!','The received message is: ',msg);
+            },
+            onChatboxDestroy:function(){
+                console.info('onChatboxDestroy(Instance) Run!');
+            }
+        }
+
+        /** 初始化聊天窗 **/
+        // 基本使用方法
+        $('.chat1').click(function(){
+            $.chatbox({
+                id:'10000',
+                user:'Jason',
+                title:'Chat with Jason',
+                onChatboxCreate:chatboxCallback.onChatboxCreate,
+                onMessageSend:chatboxCallback.onMessageSend,
+                onMessageReceive:chatboxCallback.onMessageReceive,
+                onChatboxDestroy:function(){    // 仅当需要特殊功能时直接传递函数体，否则传递函数引用以节省内存空间
+                    alert('Ha ha! I am Destroyed.');
+                }
+            });
+        });
+        // 未设置title参数，默认值：Chat with {user}，即：Chat with Kitty & 回调函数部分使用全局回调函数，部分使用实例回调函数
+        $('.chat2').click(function(){
+            $.chatbox({
+                id:'10005',
+                user:'Kitty',
+                onMessageSend:chatboxCallback.onMessageSend,
+                onMessageReceive:chatboxCallback.onMessageReceive
+            });
+        });
+        // 自定义个性标题 & 回调函数都使用全局回调函数
+        $('.chat3').click(function(){
+            $.chatbox({
+                id:'10009',
+                user:'Tony',
+                title:'Chat with Tony(Stranger)'
+            });
+        });
+        // 动态添加聊天用户
+        $('#do-chat').click(function(){
+            $.chatbox({
+                id:$("#chatbox-id").val(),
+                user:$("#chatbox-user").val(),
+                title:'Chat with '+$("#chatbox-user").val()+'(ID:'+$("#chatbox-id").val()+')'
+            });
+        });
+
+        /** API方法示例 **/
+        // 获取当前聊天窗的实例队列
+        $('#get-queue').click(function(){
+            console.info('Chatbox Instance Queue: ',$.chatbox.getQueue());
+        });
+        // 模拟消息接收
+        $('#set-msg').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).message($("#message-content").val(),$("#message-type").val());
+        });
+        // 启用/禁用聊天窗输出区
+        $('#set-enable').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).enable();
+        });
+        $('#set-disable').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).disable();
+        });
+        // 显示/隐藏聊天窗
+        $('#set-show').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).show();
+        });
+        $('#set-hide').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).hide();
+        });
+        // 销毁聊天窗
+        $('#set-destroy').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).destroy();
+        });
+        // 高亮标题栏闪烁
+        $('#set-blink').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).blink();
+        });
+        // 消息提醒动画
+        $('#set-animate').click(function(){
+            $.chatbox(Number($("#chatbox-id-api").val())).animate();
+        });
+    });
+</script>
+
+</body>
+</html>
