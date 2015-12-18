@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>jQuery.chatbox API Documents</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+    body {
+        background-color: #eeeeee;
+        padding: 1px 50px 50px;
+        margin: 0 auto;
+        font-family: "Lucida Grande",Verdana,Arial,"Bitstream Vera Sans",sans-serif;
+        font-size: 12px;
+    }
+    h1 {
+        color: #296AA0;
+        font-size: 32px;
+    }
+    h2 {
+        _color: #5A5A5A;
+        color: #F05500;
+        font-size: 28px;
+    }
+    pre {
+        word-break: break-all;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+    </style>
+</head>
+<body>
+    <div id="main-container">
+
+<h1>jQuery.chatbox 说明文档</h1>
+<hr>
+<h2>特性</h2>
+<pre>
+1.轻量级动画特效以及友好的界面
+2.支持多窗口
+3.完善的回调函数以实现自定义功能
+4.多种调用方式
+4.良好的封装以及扩展性
+5.每个聊天窗对象实例以data属性的形式附加在聊天窗DOM对象上（如果你想获得某个特定插件的实例，可以直接从页面元素中获取：$('{boxId}').data('chatbox')）
+</pre>
+
+<h2>配置项</h2>
+<p>配置项分为全局配置项和实例配置项</p>
+<pre>
+<h4>全局配置项:</h4>
+参数            类型           默认值                说明
+---------------------------------------------------------------------------------------------------------------
+id              number          null                  当前用户的id，也就是发送者的id，必须是唯一值
+user            string          null                  发送者的显示名称，可以是昵称用户名等，不要求唯一
+debug           boolean         false                 是否打开调试功能
+idPrefix        string          'chatbox_'            生成页面DOM元素的id值
+
+<h4>实例配置项:</h4>
+参数            类型           默认值                说明
+---------------------------------------------------------------------------------------------------------------
+id              number          null                  接收者的id，同时也会作为实例id，必须是唯一值
+user            string          null                  接收者的显示名称，可以是昵称用户名等，不要求唯一
+title           string          'Chat with '+{user}   聊天窗的标题
+</pre>
+
+<h2>回调函数</h2>
+<pre>
+回调函数也分为两种，一种是全局回调函数另一种是实例回调函数。
+但是有点Javascript基础的开发者应该了解不管是哪种类型的回调函数我们都应该以传递函数引用的方式来调用，而不是对每个实例创建一个函数副本。
+这样会造成内存浪费。全局回调函数不会在实例化每个聊天窗对象时重复创建副本分配给每个对象实例，而实例回调函数会。
+因此在不需要为每个独立的聊天窗分配不同的回调功能时使用实例回调函数也应该以传递函数引用的方式来分配回调函数以节省内存空间。
+</pre>
+<pre>
+<h4>回调函数参考:</h4>
+函数名                  参数       说明
+---------------------------------------------------------------------------------------------------------------
+onChatboxCreate                     创建聊天窗时触发
+onChatboxEnable                     聊天窗被启用时触发
+onChatboxDisable                    聊天窗被禁用时触发
+onMessageSend           msg         发送消息时触发,唯一参数:消息内容msg
+onMessageReceive        msg         收到消息时触发,唯一参数:消息内容msg
+onMessageSystem         msg         收到系统消息时触发,唯一参数:消息内容msg
+onChatboxDestroy                    销毁聊天窗时触发
+
+<b>优先级：</b>实例回调函数优先级高于全局回调函数，也就是说实例配置项中的回调函数会覆盖全局配置项中同名的回调函数。
+<b>this指针：</b>this指针经由apply或者call方法已经指向调用该方法的实例。
+</pre>
+
+<h2>API(属性和方法)</h2>
+<pre>
+<h4>全局API:</h4>
+属性/方法名       类型       参数          说明
+---------------------------------------------------------------------------------------------------------------
+globalOptions     属性        无           保存所有聊天窗的全局配置项
+getQueue()        方法        无           返回当前聊天窗的实例队列
+
+<h4>实例API:</h4>
+属性/方法名       类型      参数              说明
+---------------------------------------------------------------------------------------------------------------
+$elem             属性        无              保存着当前聊天窗实例的jQuery对象
+opts              属性        无              保存着当前聊天窗实例的初始化选项
+show()            方法        无              显示聊天窗
+hide()            方法        无              隐藏聊天窗
+enable()          方法        无              启用聊天窗
+disable()         方法        无              禁用聊天窗
+message()         方法        msg,type        设置接收到的消息到聊天窗,两个参数:消息内容msg、消息类型type
+blink()           方法        无              高亮标题栏闪烁提示
+destroy()         方法        无              无
+</pre>
+
+<h2>调用方式</h2>
+<pre>
+<b>设定全局配置项:</b>
+直接定义配置对象globalOptions，未给定的配置项依旧会使用默认值并不会被该配置对象覆盖
+$.chatbox.globalOptions = {
+    id:10000,
+    user:'Jason',
+    debug:true,
+    onChatboxCreate:function(){
+        //要执行的代码
+    }
+}
+
+或者以附加属性的方式
+$.chatbox.globalOptions.id = 10000;
+$.chatbox.globalOptions.user = 'Jason';
+$.chatbox.globalOptions.onChatboxCreate = function(){
+    //要执行的代码
+};
+
+<b>初始化聊天窗:</b>
+$.chatbox({
+    id:11254,
+    user:'Tony',
+    title:'Chat with Tony',
+    onChatboxCreate:function(){
+        //要执行的代码
+    }
+});
+
+<b>调用API方法:</b>
+第一种调用方式
+$.chatbox({instanceId}).message({message content});
+
+第二种调用方式
+$({boxId}).data('chatbox').message({message content});
+</pre>
+    </div>
+</body>
+</html>
